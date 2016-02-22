@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Resources;
 using System.Threading.Tasks;
 using System.Windows;
 using Views;
@@ -17,19 +21,41 @@ namespace ResourceTest
         public App()
         {
             //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("de");
+            var resourceNames = GetResourceNames();
+
             var mainView = new MainWindow();
 
-            foreach (var resourceUri in GetResourceUrisFromResourcesFolder(typeof(MainWindow).Assembly)
+            var enStrings = new ResourceDictionary { Source = new Uri("pack://application:,,,/Views;component/strings/en/strings.xaml") };
+            mainView.Resources.MergedDictionaries.Add(enStrings);
+
+            var currentUICulture = System.Threading.Thread.CurrentThread.CurrentUICulture;
+            var currentUICultureUriSuffix = "strings/" + currentUICulture.Name + "/strings.xaml";
+            if (!resourceNames.Contains(currentUICultureUriSuffix))
             {
-                mainView.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(resourceUri, UriKind.Relative) });
+                currentUICultureUriSuffix = "strings/" + currentUICulture.Parent.Name + "/strings.xaml";
+            }
+
+            if (resourceNames.Contains(currentUICultureUriSuffix))
+            {
+                var currentCultureStrings = new ResourceDictionary { Source = new Uri("pack://application:,,,/Views;component/" + currentUICultureUriSuffix) };
+                mainView.Resources.MergedDictionaries.Add(currentCultureStrings);
             }
 
             mainView.Show();
         }
 
-        private IEnumerable<string> GetResourceUrisFromResourcesFolder()
+        public static string[] GetResourceNames()
         {
-            throw new NotImplementedException();
+            var assembly = typeof(MainWindow).Assembly;
+            string resName = assembly.GetName().Name + ".g.resources";
+            using (var stream = assembly.GetManifestResourceStream(resName))
+            {
+                using (var reader = new System.Resources.ResourceReader(stream))
+                {
+                    return reader.Cast<DictionaryEntry>().Select(entry =>
+                             (string)entry.Key).ToArray();
+                }
+            }
         }
     }
 }

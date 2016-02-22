@@ -61,7 +61,16 @@ namespace Views.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to YYY.
+        ///   Looks up a localized string similar to Subtitle (resx).
+        /// </summary>
+        public static string Subtitle {
+            get {
+                return ResourceManager.GetString("Subtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title (resx).
         /// </summary>
         public static string Title {
             get {

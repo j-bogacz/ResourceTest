@@ -16,6 +16,8 @@
     </Window.Resources>
     <StackPanel>
         <Button Content="{x:Static strings:Strings.Title}" Style="{DynamicResource Style.Button}"/>
+        <Button Content="{x:Static strings:Strings.Subtitle}" Style="{DynamicResource Style.Button}"/>
         <Button Content="{DynamicResource String.Title}" Style="{DynamicResource Style.Button}"/>
+        <Button Content="{DynamicResource String.Subtitle}" Style="{DynamicResource Style.Button}"/>
     </StackPanel>
 </Window>
